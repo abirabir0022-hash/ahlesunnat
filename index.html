@@ -1,17 +1,34 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- PWA -->
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <!-- ==============================
+         PWA SETTINGS
+         ============================== -->
+
+    <!-- মোবাইলের browser/app theme color -->
     <meta name="theme-color" content="#00796b">
+
+    <!-- PWA manifest -->
     <link rel="manifest" href="./manifest.json">
 
     <title>আহলে সুন্নাত ওয়াল জামাত</title>
 
+
     <style>
+
+        /* ==============================
+           LIGHT THEME
+           ============================== */
+
         :root {
+
             --bg-color: #f4f7f6;
             --container-bg: #ffffff;
             --text-color: #333333;
@@ -22,9 +39,16 @@
             --btn-bg: #00796b;
             --btn-hover: #004d40;
             --history-bg: #f9f9f9;
+
         }
 
+
+        /* ==============================
+           DARK THEME
+           ============================== */
+
         [data-theme="dark"] {
+
             --bg-color: #121212;
             --container-bg: #1e1e1e;
             --text-color: #e0e0e0;
@@ -35,192 +59,343 @@
             --btn-bg: #00897b;
             --btn-hover: #00695c;
             --history-bg: #2a2a2a;
+
         }
+
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            font-family:
+                'Segoe UI',
+                Tahoma,
+                Geneva,
+                Verdana,
+                sans-serif;
+
             background: var(--bg-color);
+
             color: var(--text-color);
+
             margin: 0;
+
             padding: 20px;
-            transition: background 0.3s ease, color 0.3s ease;
+
+            transition:
+                background 0.3s ease,
+                color 0.3s ease;
+
         }
+
 
         .container {
+
             max-width: 600px;
+
             margin: auto;
+
             background: var(--container-bg);
+
             padding: 25px;
+
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: background 0.3s ease;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.1);
+
         }
+
 
         .header-flex {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 20px;
+
         }
+
 
         h2 {
+
             color: var(--heading-color);
+
             margin: 0;
+
         }
+
 
         .theme-toggle {
+
             background: none;
-            border: 2px solid var(--heading-color);
+
+            border:
+                2px solid var(--heading-color);
+
             color: var(--heading-color);
+
             padding: 6px 12px;
+
             border-radius: 20px;
+
             cursor: pointer;
+
             font-size: 14px;
+
             font-weight: bold;
-            transition: 0.2s;
+
         }
 
-        .theme-toggle:hover {
-            background: var(--heading-color);
-            color: var(--container-bg);
-        }
 
         input[type="text"] {
+
             width: 100%;
+
             padding: 14px;
+
             margin-bottom: 15px;
+
             background: var(--input-bg);
+
             color: var(--text-color);
-            border: 1px solid var(--input-border);
+
+            border:
+                1px solid var(--input-border);
+
             border-radius: 8px;
+
             box-sizing: border-box;
+
             font-size: 16px;
+
             outline: none;
-            transition: border-color 0.2s;
+
         }
+
 
         input[type="text"]:focus {
+
             border-color: var(--heading-color);
+
         }
+
 
         button.submit-btn {
+
             width: 100%;
+
             background: var(--btn-bg);
+
             color: white;
+
             border: none;
+
             padding: 14px;
+
             border-radius: 8px;
+
             cursor: pointer;
+
             font-size: 16px;
+
             font-weight: bold;
-            transition: background 0.2s;
+
         }
+
 
         button.submit-btn:hover {
+
             background: var(--btn-hover);
+
         }
+
 
         .result-box {
+
             margin-top: 20px;
+
             padding: 18px;
+
             background: var(--result-bg);
-            border-left: 5px solid var(--heading-color);
+
+            border-left:
+                5px solid var(--heading-color);
+
             border-radius: 8px;
+
             min-height: 60px;
+
             white-space: pre-wrap;
+
             word-break: break-word;
+
             line-height: 1.6;
+
         }
+
 
         .action-btns {
+
             display: flex;
+
             gap: 10px;
+
             margin-top: 10px;
+
         }
+
 
         .action-btn {
+
             background: var(--heading-color);
+
             color: white;
+
             border: none;
+
             padding: 8px 12px;
+
             border-radius: 5px;
+
             cursor: pointer;
+
             font-size: 14px;
+
             flex: 1;
+
         }
 
-        .action-btn:hover {
-            background: var(--btn-hover);
-        }
 
-        /* হিস্টরি সেকশন */
         .history-section {
+
             margin-top: 30px;
-            border-top: 1px solid var(--input-border);
+
+            border-top:
+                1px solid var(--input-border);
+
             padding-top: 15px;
+
         }
+
 
         .history-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 10px;
+
         }
+
 
         .clear-history {
+
             background: #d32f2f;
+
             color: white;
+
             border: none;
+
             padding: 4px 10px;
+
             border-radius: 4px;
+
             cursor: pointer;
+
             font-size: 12px;
+
         }
+
 
         .history-item {
+
             background: var(--history-bg);
+
             padding: 10px;
+
             margin-bottom: 8px;
+
             border-radius: 6px;
-            border: 1px solid var(--input-border);
+
+            border:
+                1px solid var(--input-border);
+
             font-size: 14px;
+
         }
+
 
         .history-q {
+
             font-weight: bold;
+
             color: var(--heading-color);
+
         }
 
-        /* ডেভেলপার ক্রেডিট ফুটার স্টাইল */
+
         .developer-credit {
+
             margin-top: 25px;
+
             text-align: center;
+
             font-size: 13px;
+
             color: var(--heading-color);
-            border-top: 1px dashed var(--input-border);
+
+            border-top:
+                1px dashed var(--input-border);
+
             padding-top: 12px;
+
             opacity: 0.9;
+
         }
 
-        /* লোডিং স্পিনার */
+
         .loader-container {
+
             display: flex;
+
             align-items: center;
+
             gap: 10px;
+
             color: var(--heading-color);
+
             font-weight: bold;
+
         }
+
 
         .spinner {
+
             width: 20px;
+
             height: 20px;
-            border: 3px solid rgba(0, 121, 107, 0.2);
-            border-top: 3px solid var(--heading-color);
+
+            border:
+                3px solid rgba(0, 121, 107, 0.2);
+
+            border-top:
+                3px solid var(--heading-color);
+
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+
+            animation:
+                spin 0.8s linear infinite;
+
         }
 
+
         @keyframes spin {
+
             0% {
                 transform: rotate(0deg);
             }
@@ -228,18 +403,43 @@
             100% {
                 transform: rotate(360deg);
             }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
 <div class="container">
 
+
+    <!-- ==============================
+         HEADER
+         ============================== -->
+
     <div class="header-flex">
-        <h2>ইসলামিক প্রশ্নোত্তর</h2>
-        <button class="theme-toggle" onclick="toggleTheme()">🌙 থিম</button>
+
+        <h2>
+            ইসলামিক প্রশ্নোত্তর
+        </h2>
+
+        <button
+            class="theme-toggle"
+            onclick="toggleTheme()">
+
+            🌙 থিম
+
+        </button>
+
     </div>
+
+
+    <!-- ==============================
+         QUESTION INPUT
+         ============================== -->
 
     <input
         type="text"
@@ -247,129 +447,488 @@
         placeholder="আপনার প্রশ্ন এখানে লিখুন..."
     >
 
-    <button class="submit-btn" onclick="loadAnswer()">
+
+    <button
+        class="submit-btn"
+        onclick="loadAnswer()">
+
         উত্তর খুঁজুন
+
     </button>
 
-    <div class="result-box" id="outputDiv">
+
+    <!-- AI ANSWER -->
+    <div
+        class="result-box"
+        id="outputDiv">
+
         উত্তর এখানে প্রদর্শিত হবে...
+
     </div>
 
-    <div class="action-btns" id="actionBtns" style="display: none;">
-        <button class="action-btn" onclick="copyAnswer()">
+
+    <!-- COPY + SHARE -->
+    <div
+        class="action-btns"
+        id="actionBtns"
+        style="display: none;">
+
+        <button
+            class="action-btn"
+            onclick="copyAnswer()">
+
             📋 কপি করুন
+
         </button>
 
-        <button class="action-btn" onclick="shareAnswer()">
+
+        <button
+            class="action-btn"
+            onclick="shareAnswer()">
+
             🔗 শেয়ার করুন
+
         </button>
+
     </div>
 
-    <!-- হিস্টরি সেকশন -->
+
+    <!-- ==============================
+         HISTORY
+         ============================== -->
+
     <div class="history-section">
 
         <div class="history-header">
-            <strong>পূর্ববর্তী প্রশ্নসমূহ (হিস্টরি)</strong>
 
-            <button class="clear-history" onclick="clearHistory()">
+            <strong>
+                পূর্ববর্তী প্রশ্নসমূহ (হিস্টরি)
+            </strong>
+
+            <button
+                class="clear-history"
+                onclick="clearHistory()">
+
                 সব মুছুন
+
             </button>
+
         </div>
+
 
         <div id="historyList">
+
             কোনো হিস্টরি নেই।
+
         </div>
 
     </div>
 
-    <!-- ডেভেলপার ক্রেডিট ইনফো -->
+
+    <!-- DEVELOPER -->
     <div class="developer-credit">
+
         প্রস্তুতকারক ও ডেভেলপার:
-        <strong>Mohammad Moddassir Ali</strong>
+
+        <strong>
+            Mohammad Moddassir Ali
+        </strong>
+
         <br>
+
         যোগাযোগ: 01307779842
+
     </div>
+
 
 </div>
 
 
-<script>
 
-    let currentAnswerText = "";
+<script type="module">
+
+    /* ==========================================
+       FIREBASE IMPORT
+       ==========================================
+
+       Firebase SDK CDN থেকে Firebase App
+       এবং Cloud Messaging নেওয়া হচ্ছে।
+
+       কাজ:
+       🔥 Firebase-এর সাথে website connect করা
+       🔔 Push Notification চালু করা
+    ========================================== */
+
+    import {
+        initializeApp
+    } from
+    "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 
-    // ================================
-    // THEME
-    // ================================
+    import {
+        getMessaging,
+        getToken,
+        onMessage
+    } from
+    "https://www.gstatic.com/firebasejs/12.17.1/firebase-messaging.js";
 
-    function toggleTheme() {
 
-        const html = document.documentElement;
 
-        const currentTheme = html.getAttribute('data-theme');
+    /* ==========================================
+       FIREBASE CONFIG
+       ========================================== */
 
-        if (currentTheme === 'dark') {
+    const firebaseConfig = {
 
-            html.setAttribute('data-theme', 'light');
+        apiKey:
+            "AIzaSyCPRWpUI98Ggr4rrlC5yqXsaaAJIkCNp-0",
 
-            localStorage.setItem('theme', 'light');
+        authDomain:
+            "ahle-sunnat-islamic-qa.firebaseapp.com",
 
-        } else {
+        projectId:
+            "ahle-sunnat-islamic-qa",
 
-            html.setAttribute('data-theme', 'dark');
+        storageBucket:
+            "ahle-sunnat-islamic-qa.firebasestorage.app",
 
-            localStorage.setItem('theme', 'dark');
+        messagingSenderId:
+            "58263470817",
+
+        appId:
+            "1:58263470817:web:31e14a98ebbd00f9c26da0",
+
+        measurementId:
+            "G-VYT6MJYZW7"
+
+    };
+
+
+    /* Firebase চালু */
+    const app =
+        initializeApp(firebaseConfig);
+
+
+    /* Firebase Cloud Messaging চালু */
+    const messaging =
+        getMessaging(app);
+
+
+
+    /* ==========================================
+       VAPID PUBLIC KEY
+       ==========================================
+
+       Firebase Console থেকে পাওয়া
+       Web Push certificate public key।
+
+       এটি public key।
+    ========================================== */
+
+    const vapidKey =
+        "BKQ614I1ySh5mec9TTsSfNoZ_NRbxv_jTQzxJ5dSQR5PkbzJmkR-T-8HaqkjoM2Dqrd20KISgVdJES0qwwiBWgs";
+
+
+
+    /* ==========================================
+       REQUEST NOTIFICATION PERMISSION
+       ========================================== */
+
+    async function enableNotifications() {
+
+        try {
+
+            /* Browser-এর notification permission চাই */
+            const permission =
+                await Notification.requestPermission();
+
+
+            if (permission !== "granted") {
+
+                console.log(
+                    "Notification permission denied."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             Firebase Messaging service worker
+             register করা হচ্ছে।
+            */
+
+            const registration =
+                await navigator.serviceWorker.register(
+                    "./firebase-messaging-sw.js"
+                );
+
+
+            /*
+             Firebase থেকে notification token নেওয়া।
+             
+             এই token-এর মাধ্যমে নির্দিষ্ট device-এ
+             notification পাঠানো যায়।
+            */
+
+            const token =
+                await getToken(
+                    messaging,
+                    {
+                        vapidKey: vapidKey,
+                        serviceWorkerRegistration:
+                            registration
+                    }
+                );
+
+
+            if (token) {
+
+                console.log(
+                    "Firebase Notification Token:",
+                    token
+                );
+
+                /*
+                 IMPORTANT:
+                 এই token পরে n8n / database-এ
+                 save করা যাবে।
+                */
+
+                localStorage.setItem(
+                    "fcm_token",
+                    token
+                );
+
+
+                alert(
+                    "🔔 Notification চালু হয়েছে!"
+                );
+
+            } else {
+
+                console.log(
+                    "Notification token পাওয়া যায়নি।"
+                );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "Notification setup error:",
+                error
+            );
 
         }
 
     }
 
 
-    const savedTheme = localStorage.getItem('theme') || 'light';
 
-    document.documentElement.setAttribute(
-        'data-theme',
-        savedTheme
+    /* ==========================================
+       FOREGROUND NOTIFICATION
+       ==========================================
+
+       Website খোলা থাকা অবস্থায় Firebase
+       notification এলে এখানে ধরা হবে।
+    ========================================== */
+
+    onMessage(
+        messaging,
+        (payload) => {
+
+            console.log(
+                "Foreground notification:",
+                payload
+            );
+
+
+            const title =
+                payload.notification?.title ||
+                "আহলে সুন্নাত";
+
+
+            const body =
+                payload.notification?.body ||
+                "নতুন notification এসেছে।";
+
+
+            /*
+             Browser notification দেখানো।
+            */
+
+            if (
+                Notification.permission ===
+                "granted"
+            ) {
+
+                new Notification(
+                    title,
+                    {
+                        body: body,
+                        icon: "./icon-192.png"
+                    }
+                );
+
+            }
+
+        }
     );
 
 
-    // ================================
-    // PAGE LOAD
-    // ================================
 
-    window.onload = function() {
+    /* ==========================================
+       AUTO NOTIFICATION SETUP
+       ==========================================
 
-        displayHistory();
+       Website load হওয়ার পর notification
+       permission চাইবে।
+
+       যদি আগে permission দেওয়া থাকে,
+       আবার permission popup দেখাবে না।
+    ========================================== */
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            if (
+                "Notification" in window &&
+                Notification.permission !==
+                "granted"
+            ) {
+
+                /*
+                 একটু delay রাখা হয়েছে যাতে
+                 website প্রথমে properly load হয়।
+                */
+
+                setTimeout(
+                    enableNotifications,
+                    1500
+                );
+
+            }
+
+        }
+    );
+
+
+
+    /* ==========================================
+       THEME
+       ========================================== */
+
+    window.toggleTheme =
+    function () {
+
+        const html =
+            document.documentElement;
+
+
+        const currentTheme =
+            html.getAttribute(
+                "data-theme"
+            );
+
+
+        if (
+            currentTheme === "dark"
+        ) {
+
+            html.setAttribute(
+                "data-theme",
+                "light"
+            );
+
+
+            localStorage.setItem(
+                "theme",
+                "light"
+            );
+
+        }
+
+        else {
+
+            html.setAttribute(
+                "data-theme",
+                "dark"
+            );
+
+
+            localStorage.setItem(
+                "theme",
+                "dark"
+            );
+
+        }
 
     };
 
 
-    // ================================
-    // AI ANSWER
-    // ================================
+    /* আগের theme restore */
+    const savedTheme =
+        localStorage.getItem(
+            "theme"
+        ) || "light";
 
-    async function loadAnswer() {
 
-        const q = document
-            .getElementById('userQuery')
-            .value
-            .trim();
+    document.documentElement
+        .setAttribute(
+            "data-theme",
+            savedTheme
+        );
 
-        const box = document.getElementById('outputDiv');
 
-        const actionBtns = document.getElementById('actionBtns');
+
+    /* ==========================================
+       AI ANSWER
+       ========================================== */
+
+    let currentAnswerText = "";
+
+
+    window.loadAnswer =
+    async function () {
+
+        const q =
+            document
+                .getElementById(
+                    "userQuery"
+                )
+                .value
+                .trim();
+
+
+        const box =
+            document.getElementById(
+                "outputDiv"
+            );
+
+
+        const actionBtns =
+            document.getElementById(
+                "actionBtns"
+            );
 
 
         if (!q) {
 
-            alert('আগে প্রশ্ন লিখুন!');
+            alert(
+                "আগে প্রশ্ন লিখুন!"
+            );
 
             return;
 
         }
 
 
-        actionBtns.style.display = 'none';
+        actionBtns.style.display =
+            "none";
 
 
         box.innerHTML = `
@@ -379,7 +938,8 @@
                 <div class="spinner"></div>
 
                 <span>
-                    উত্তর খোঁজা হচ্ছে, দয়া করে অপেক্ষা করুন...
+                    উত্তর খোঁজা হচ্ছে,
+                    দয়া করে অপেক্ষা করুন...
                 </span>
 
             </div>
@@ -389,27 +949,34 @@
 
         try {
 
-            let res = await fetch(
-                'https://server.automationlearners.com/webhook/7b915938-8622-40de-9419-86bfe51abc25',
-                {
-                    method: 'POST',
+            const res =
+                await fetch(
+                    "https://server.automationlearners.com/webhook/7b915938-8622-40de-9419-86bfe51abc25",
+                    {
 
-                    headers: {
+                        method: "POST",
 
-                        'Content-Type': 'application/json',
+                        headers: {
 
-                        'Accept': 'application/json'
+                            "Content-Type":
+                                "application/json",
 
-                    },
+                            "Accept":
+                                "application/json"
 
-                    body: JSON.stringify({
-                        question: q
-                    })
-                }
-            );
+                        },
+
+                        body:
+                            JSON.stringify({
+                                question: q
+                            })
+
+                    }
+                );
 
 
-            const responseText = await res.text();
+            const responseText =
+                await res.text();
 
 
             let jsonRes;
@@ -417,26 +984,40 @@
 
             try {
 
-                jsonRes = JSON.parse(responseText);
+                jsonRes =
+                    JSON.parse(
+                        responseText
+                    );
 
-            } catch (e) {
+            }
+
+            catch (e) {
 
                 jsonRes = {
-                    answer: responseText
+                    answer:
+                        responseText
                 };
 
             }
 
 
-            if (jsonRes && jsonRes.answer) {
+            if (
+                jsonRes &&
+                jsonRes.answer
+            ) {
 
-                currentAnswerText = jsonRes.answer;
+                currentAnswerText =
+                    jsonRes.answer;
 
             }
 
-            else if (jsonRes && jsonRes.output) {
+            else if (
+                jsonRes &&
+                jsonRes.output
+            ) {
 
-                currentAnswerText = jsonRes.output;
+                currentAnswerText =
+                    jsonRes.output;
 
             }
 
@@ -449,9 +1030,12 @@
             }
 
 
-            box.innerText = currentAnswerText;
+            box.innerText =
+                currentAnswerText;
 
-            actionBtns.style.display = 'flex';
+
+            actionBtns.style.display =
+                "flex";
 
 
             saveToHistory(
@@ -460,64 +1044,84 @@
             );
 
 
-        } catch (err) {
+        }
+
+        catch (err) {
 
             console.error(err);
 
-            box.innerText =
-                "সংযোগ স্থাপন করা যায়নি। ইন্টারনেটে সমস্যা হতে পারে।";
 
-            actionBtns.style.display = 'none';
+            box.innerText =
+                "সংযোগ স্থাপন করা যায়নি। " +
+                "ইন্টারনেটে সমস্যা হতে পারে.";
+
+
+            actionBtns.style.display =
+                "none";
 
         }
 
-    }
+    };
 
 
-    // ================================
-    // COPY
-    // ================================
 
-    function copyAnswer() {
+    /* ==========================================
+       COPY
+       ========================================== */
 
-        if (!currentAnswerText) return;
+    window.copyAnswer =
+    function () {
+
+        if (!currentAnswerText)
+            return;
 
 
         navigator.clipboard
-            .writeText(currentAnswerText)
+            .writeText(
+                currentAnswerText
+            )
             .then(() => {
 
                 alert(
-                    'উত্তরটি ক্লিপবোর্ডে কপি করা হয়েছে!'
+                    "উত্তরটি ক্লিপবোর্ডে " +
+                    "কপি করা হয়েছে!"
                 );
 
             });
 
-    }
+    };
 
 
-    // ================================
-    // SHARE
-    // ================================
 
-    function shareAnswer() {
+    /* ==========================================
+       SHARE
+       ========================================== */
 
-        if (!currentAnswerText) return;
+    window.shareAnswer =
+    function () {
+
+        if (!currentAnswerText)
+            return;
 
 
-        if (navigator.share) {
+        if (
+            navigator.share
+        ) {
 
             navigator.share({
 
-                title: 'ইসলামিক প্রশ্নোত্তর',
+                title:
+                    "ইসলামিক প্রশ্নোত্তর",
 
-                text: currentAnswerText
+                text:
+                    currentAnswerText
 
-            }).catch((error) =>
-                console.log(
-                    'Sharing failed',
-                    error
-                )
+            }).catch(
+                (error) =>
+                    console.log(
+                        "Sharing failed",
+                        error
+                    )
             );
 
         }
@@ -525,17 +1129,19 @@
         else {
 
             alert(
-                'আপনার ডিভাইসটি শেয়ারিং সমর্থন করছে না। দয়া করে কপি করে নিন।'
+                "আপনার ডিভাইসটি শেয়ারিং " +
+                "সমর্থন করছে না।"
             );
 
         }
 
-    }
+    };
 
 
-    // ================================
-    // HISTORY
-    // ================================
+
+    /* ==========================================
+       HISTORY
+       ========================================== */
 
     function saveToHistory(
         question,
@@ -545,21 +1151,25 @@
         let history =
             JSON.parse(
                 localStorage.getItem(
-                    'islamic_qa_history'
+                    "islamic_qa_history"
                 )
             ) || [];
 
 
         history.unshift({
 
-            question,
+            question:
+                question,
 
-            answer
+            answer:
+                answer
 
         });
 
 
-        if (history.length > 10) {
+        if (
+            history.length > 10
+        ) {
 
             history.pop();
 
@@ -568,7 +1178,7 @@
 
         localStorage.setItem(
 
-            'islamic_qa_history',
+            "islamic_qa_history",
 
             JSON.stringify(history)
 
@@ -580,23 +1190,26 @@
     }
 
 
+
     function displayHistory() {
 
         let history =
             JSON.parse(
                 localStorage.getItem(
-                    'islamic_qa_history'
+                    "islamic_qa_history"
                 )
             ) || [];
 
 
-        let historyListDiv =
+        const historyListDiv =
             document.getElementById(
-                'historyList'
+                "historyList"
             );
 
 
-        if (history.length === 0) {
+        if (
+            history.length === 0
+        ) {
 
             historyListDiv.innerHTML =
                 "কোনো হিস্টরি নেই।";
@@ -609,78 +1222,145 @@
         let html = "";
 
 
-        history.forEach((item) => {
+        history.forEach(
+            (item) => {
 
-            html += `
+                html += `
 
-                <div class="history-item">
+                    <div class="history-item">
 
-                    <div class="history-q">
-                        প্রশ্ন: ${item.question}
+                        <div class="history-q">
+
+                            প্রশ্ন:
+                            ${escapeHtml(
+                                item.question
+                            )}
+
+                        </div>
+
+                        <div
+                            style="
+                                margin-top: 5px;
+                                color:
+                                var(--text-color);
+                            "
+                        >
+
+                            ${escapeHtml(
+                                item.answer
+                                    .substring(
+                                        0,
+                                        80
+                                    )
+                            )}...
+
+                        </div>
+
                     </div>
 
-                    <div
-                        style="
-                            margin-top: 5px;
-                            color: var(--text-color);
-                        "
-                    >
-                        ${item.answer.substring(0, 80)}...
-                    </div>
+                `;
 
-                </div>
-
-            `;
-
-        });
+            }
+        );
 
 
-        historyListDiv.innerHTML = html;
+        historyListDiv.innerHTML =
+            html;
 
     }
 
 
-    function clearHistory() {
+
+    /* নিরাপদভাবে history দেখানো */
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.textContent =
+            text;
+
+        return div.innerHTML;
+
+    }
+
+
+
+    window.clearHistory =
+    function () {
 
         localStorage.removeItem(
-            'islamic_qa_history'
+            "islamic_qa_history"
         );
 
         displayHistory();
 
-    }
+    };
 
 
-    // ================================
-    // PWA SERVICE WORKER
-    // ================================
 
-    if ('serviceWorker' in navigator) {
+    /* ==========================================
+       PAGE LOAD
+       ========================================== */
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            displayHistory();
+
+        }
+    );
+
+
+
+    /* ==========================================
+       PWA SERVICE WORKER
+       ==========================================
+
+       sw.js = তোমার PWA/offline cache
+
+       firebase-messaging-sw.js =
+       Firebase Push Notification
+
+       দুটো আলাদা কাজ।
+    ========================================== */
+
+    if (
+        "serviceWorker" in navigator
+    ) {
 
         window.addEventListener(
-            'load',
-            function() {
+            "load",
+            async () => {
 
-                navigator.serviceWorker
-                    .register('./sw.js')
+                try {
 
-                    .then(function(registration) {
+                    const registration =
+                        await navigator
+                            .serviceWorker
+                            .register(
+                                "./sw.js"
+                            );
 
-                        console.log(
-                            'PWA Service Worker registered:',
-                            registration.scope
-                        );
 
-                    })
+                    console.log(
+                        "PWA Service Worker registered:",
+                        registration.scope
+                    );
 
-                    .catch(function(error) {
+                }
 
-                        console.error(
-                            'PWA Service Worker registration failed:',
-                            error
-                        );
+                catch (error) {
 
-                    });
+                    console.error(
+                        "PWA Service Worker failed:",
+                        error
+                    );
+
+                }
 
             }
         );
