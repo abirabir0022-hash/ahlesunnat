@@ -1,0 +1,10 @@
+{
+  "name": "আহলে সুন্নাত ইসলামিক প্রশ্নোত্তর",
+  "short_name": "আহলে সুন্নাত",
+  "description": "ইসলামিক প্রশ্নের উত্তর জানুন",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00796b",
+  "orientation": "portrait"
+}
