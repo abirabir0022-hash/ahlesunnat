@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আহলে সুন্নাত ওয়াল জামাত</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --heading-color: #00796b;
+            --input-bg: #ffffff;
+            --input-border: #ccc;
+            --result-bg: #e0f2f1;
+            --btn-bg: #00796b;
+            --btn-hover: #004d40;
+            --history-bg: #f9f9f9;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --heading-color: #80cbc4;
+            --input-bg: #2d2d2d;
+            --input-border: #444;
+            --result-bg: #263238;
+            --btn-bg: #00897b;
+            --btn-hover: #00695c;
+            --history-bg: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: var(--container-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: var(--heading-color);
+            margin: 0;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--heading-color);
+            color: var(--heading-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--heading-color);
+            color: var(--container-bg);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--heading-color);
+        }
+
+        button.submit-btn {
+            width: 100%;
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button.submit-btn:hover {
+            background: var(--btn-hover);
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 18px;
+            background: var(--result-bg);
+            border-left: 5px solid var(--heading-color);
+            border-radius: 8px;
+            min-height: 60px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background: var(--heading-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .action-btn:hover {
+            background: var(--btn-hover);
+        }
+
+        /* হিস্টরি সেকশন */
+        .history-section {
+            margin-top: 30px;
+            border-top: 1px solid var(--input-border);
+            padding-top: 15px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .clear-history {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .history-item {
+            background: var(--history-bg);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--input-border);
+            font-size: 14px;
+        }
+
+        .history-q {
+            font-weight: bold;
+            color: var(--heading-color);
+        }
+
+        /* ডেভেলপার ক্রেডিট ফুটার স্টাইল */
+        .developer-credit {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--heading-color);
+            border-top: 1px dashed var(--input-border);
+            padding-top: 12px;
+            opacity: 0.9;
+        }
+
+        /* লোডিং স্পিনার */
+        .loader-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--heading-color);
+            font-weight: bold;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 121, 107, 0.2);
+            border-top: 3px solid var(--heading-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-flex">
+        <h2>ইসলামিক প্রশ্নোত্তর</h2>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙 থিম</button>
+    </div>
+
+    <input type="text" id="userQuery" placeholder="আপনার প্রশ্ন এখানে লিখুন...">
+    <button class="submit-btn" onclick="loadAnswer()">উত্তর খুঁজুন</button>
+    
+    <div class="result-box" id="outputDiv">উত্তর এখানে প্রদর্শিত হবে...</div>
+    
+    <div class="action-btns" id="actionBtns" style="display: none;">
+        <button class="action-btn" onclick="copyAnswer()">📋 কপি করুন</button>
+        <button class="action-btn" onclick="shareAnswer()">🔗 শেয়ার করুন</button>
+    </div>
+
+    <!-- হিস্টরি সেকশন -->
+    <div class="history-section">
+        <div class="history-header">
+            <strong>পূর্ববর্তী প্রশ্নসমূহ (হিস্টরি)</strong>
+            <button class="clear-history" onclick="clearHistory()">সব মুছুন</button>
+        </div>
+        <div id="historyList">কোনো হিস্টরি নেই।</div>
+    </div>
+
+    <!-- ডেভেলপার ক্রেডিট ইনফো -->
+    <div class="developer-credit">
+        প্রস্তুতকারک ও ডেভেলপার: <strong>Mohammad Moddassir Ali</strong><br>
+        যোগাযোগ: 01307779842
+    </div>
+</div>
+
+<script>
+    let currentAnswerText = "";
+
+    // থিম টগল ফাংশন
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            html.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    window.onload = function() {
+        displayHistory();
+    }
+
+    async function loadAnswer() {
+        const q = document.getElementById('userQuery').value.trim();
+        const box = document.getElementById('outputDiv');
+        const actionBtns = document.getElementById('actionBtns');
+
+        if (!q) {
+            alert('আগে প্রশ্ন লিখুন!');
+            return;
+        }
+
+        actionBtns.style.display = 'none';
+        box.innerHTML = `
+            <div class="loader-container">
+                <div class="spinner"></div>
+                <span>উত্তর খোঁজা হচ্ছে, দয়া করে অপেক্ষা করুন...</span>
+            </div>
+        `;
+
+        try {
+            let res = await fetch('https://server.automationlearners.com/webhook/7b915938-8622-40de-9419-86bfe51abc25', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ question: q })
+            });
+
+            const responseText = await res.text();
+            let jsonRes;
+            try {
+                jsonRes = JSON.parse(responseText);
+            } catch (e) {
+                jsonRes = { answer: responseText };
+            }
+            
+            if(jsonRes && jsonRes.answer) {
+                currentAnswerText = jsonRes.answer;
+            } else if(jsonRes && jsonRes.output) {
+                currentAnswerText = jsonRes.output;
+            } else {
+                currentAnswerText = responseText || "কোনো উত্তর পাওয়া যায়নি।";
+            }
+
+            box.innerText = currentAnswerText;
+            actionBtns.style.display = 'flex';
+
+            saveToHistory(q, currentAnswerText);
+
+        } catch (err) {
+            console.error(err);
+            box.innerText = "সংযোগ স্থাপন করা যায়নি। ইন্টারনেটে সমস্যা হতে পারে।";
+            actionBtns.style.display = 'none';
+        }
+    }
+
+    function copyAnswer() {
+        if (!currentAnswerText) return;
+        navigator.clipboard.writeText(currentAnswerText).then(() => {
+            alert('উত্তরটি ক্লিপবোর্ডে কপি করা হয়েছে!');
+        });
+    }
+
+    function shareAnswer() {
+        if (!currentAnswerText) return;
+        if (navigator.share) {
+            navigator.share({
+                title: 'ইসলামিক প্রশ্নোত্তর',
+                text: currentAnswerText,
+            }).catch((error) => console.log('Sharing failed', error));
+        } else {
+            alert('আপনার ডিভাইসটি শেয়ারিং সমর্থন করছে না। দয়া করে কপি করে নিন।');
+        }
+    }
+
+    function saveToHistory(question, answer) {
+        let history = JSON.parse(localStorage.getItem('islamic_qa_history')) || [];
+        history.unshift({ question, answer });
+        if (history.length > 10) history.pop();
+        localStorage.setItem('islamic_qa_history', JSON.stringify(history));
+        displayHistory();
+    }
+
+    function displayHistory() {
+        let history = JSON.parse(localStorage.getItem('islamic_qa_history')) || [];
+        let historyListDiv = document.getElementById('historyList');
+
+        if (history.length === 0) {
+            historyListDiv.innerHTML = "কোনো হিস্টরি নেই।";
+            return;
+        }
+
+        let html = "";
+        history.forEach((item) => {
+            html += `
+                <div class="history-item">
+                    <div class="history-q">প্রশ্ন: ${item.question}</div>
+                    <div style="margin-top: 5px; color: var(--text-color);">${item.answer.substring(0, 80)}...</div>
+                </div>
+            `;
+        });
+        historyListDiv.innerHTML = html;
+    }
+
+    function clearHistory() {
+        localStorage.removeItem('islamic_qa_history');
+        displayHistory();
+    }
+</script>
+
+</body>
+</html>
