@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- PWA -->
+    <meta name="theme-color" content="#00796b">
+    <link rel="manifest" href="./manifest.json">
+
     <title>আহলে সুন্নাত ওয়াল জামাত</title>
+
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -215,176 +221,472 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
 
 <div class="container">
+
     <div class="header-flex">
         <h2>ইসলামিক প্রশ্নোত্তর</h2>
         <button class="theme-toggle" onclick="toggleTheme()">🌙 থিম</button>
     </div>
 
-    <input type="text" id="userQuery" placeholder="আপনার প্রশ্ন এখানে লিখুন...">
-    <button class="submit-btn" onclick="loadAnswer()">উত্তর খুঁজুন</button>
-    
-    <div class="result-box" id="outputDiv">উত্তর এখানে প্রদর্শিত হবে...</div>
-    
+    <input
+        type="text"
+        id="userQuery"
+        placeholder="আপনার প্রশ্ন এখানে লিখুন..."
+    >
+
+    <button class="submit-btn" onclick="loadAnswer()">
+        উত্তর খুঁজুন
+    </button>
+
+    <div class="result-box" id="outputDiv">
+        উত্তর এখানে প্রদর্শিত হবে...
+    </div>
+
     <div class="action-btns" id="actionBtns" style="display: none;">
-        <button class="action-btn" onclick="copyAnswer()">📋 কপি করুন</button>
-        <button class="action-btn" onclick="shareAnswer()">🔗 শেয়ার করুন</button>
+        <button class="action-btn" onclick="copyAnswer()">
+            📋 কপি করুন
+        </button>
+
+        <button class="action-btn" onclick="shareAnswer()">
+            🔗 শেয়ার করুন
+        </button>
     </div>
 
     <!-- হিস্টরি সেকশন -->
     <div class="history-section">
+
         <div class="history-header">
             <strong>পূর্ববর্তী প্রশ্নসমূহ (হিস্টরি)</strong>
-            <button class="clear-history" onclick="clearHistory()">সব মুছুন</button>
+
+            <button class="clear-history" onclick="clearHistory()">
+                সব মুছুন
+            </button>
         </div>
-        <div id="historyList">কোনো হিস্টরি নেই।</div>
+
+        <div id="historyList">
+            কোনো হিস্টরি নেই।
+        </div>
+
     </div>
 
     <!-- ডেভেলপার ক্রেডিট ইনফো -->
     <div class="developer-credit">
-        প্রস্তুতকারک ও ডেভেলপার: <strong>Mohammad Moddassir Ali</strong><br>
+        প্রস্তুতকারক ও ডেভেলপার:
+        <strong>Mohammad Moddassir Ali</strong>
+        <br>
         যোগাযোগ: 01307779842
     </div>
+
 </div>
 
+
 <script>
+
     let currentAnswerText = "";
 
-    // থিম টগল ফাংশন
+
+    // ================================
+    // THEME
+    // ================================
+
     function toggleTheme() {
+
         const html = document.documentElement;
+
         const currentTheme = html.getAttribute('data-theme');
+
         if (currentTheme === 'dark') {
+
             html.setAttribute('data-theme', 'light');
+
             localStorage.setItem('theme', 'light');
+
         } else {
+
             html.setAttribute('data-theme', 'dark');
+
             localStorage.setItem('theme', 'dark');
+
         }
+
     }
+
 
     const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    document.documentElement.setAttribute(
+        'data-theme',
+        savedTheme
+    );
+
+
+    // ================================
+    // PAGE LOAD
+    // ================================
 
     window.onload = function() {
+
         displayHistory();
-    }
+
+    };
+
+
+    // ================================
+    // AI ANSWER
+    // ================================
 
     async function loadAnswer() {
-        const q = document.getElementById('userQuery').value.trim();
+
+        const q = document
+            .getElementById('userQuery')
+            .value
+            .trim();
+
         const box = document.getElementById('outputDiv');
+
         const actionBtns = document.getElementById('actionBtns');
 
+
         if (!q) {
+
             alert('আগে প্রশ্ন লিখুন!');
+
             return;
+
         }
+
 
         actionBtns.style.display = 'none';
+
+
         box.innerHTML = `
+
             <div class="loader-container">
+
                 <div class="spinner"></div>
-                <span>উত্তর খোঁজা হচ্ছে, দয়া করে অপেক্ষা করুন...</span>
+
+                <span>
+                    উত্তর খোঁজা হচ্ছে, দয়া করে অপেক্ষা করুন...
+                </span>
+
             </div>
+
         `;
 
+
         try {
-            let res = await fetch('https://server.automationlearners.com/webhook/7b915938-8622-40de-9419-86bfe51abc25', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ question: q })
-            });
+
+            let res = await fetch(
+                'https://server.automationlearners.com/webhook/7b915938-8622-40de-9419-86bfe51abc25',
+                {
+                    method: 'POST',
+
+                    headers: {
+
+                        'Content-Type': 'application/json',
+
+                        'Accept': 'application/json'
+
+                    },
+
+                    body: JSON.stringify({
+                        question: q
+                    })
+                }
+            );
+
 
             const responseText = await res.text();
+
+
             let jsonRes;
+
+
             try {
+
                 jsonRes = JSON.parse(responseText);
+
             } catch (e) {
-                jsonRes = { answer: responseText };
+
+                jsonRes = {
+                    answer: responseText
+                };
+
             }
-            
-            if(jsonRes && jsonRes.answer) {
+
+
+            if (jsonRes && jsonRes.answer) {
+
                 currentAnswerText = jsonRes.answer;
-            } else if(jsonRes && jsonRes.output) {
-                currentAnswerText = jsonRes.output;
-            } else {
-                currentAnswerText = responseText || "কোনো উত্তর পাওয়া যায়নি।";
+
             }
+
+            else if (jsonRes && jsonRes.output) {
+
+                currentAnswerText = jsonRes.output;
+
+            }
+
+            else {
+
+                currentAnswerText =
+                    responseText ||
+                    "কোনো উত্তর পাওয়া যায়নি।";
+
+            }
+
 
             box.innerText = currentAnswerText;
+
             actionBtns.style.display = 'flex';
 
-            saveToHistory(q, currentAnswerText);
+
+            saveToHistory(
+                q,
+                currentAnswerText
+            );
+
 
         } catch (err) {
+
             console.error(err);
-            box.innerText = "সংযোগ স্থাপন করা যায়নি। ইন্টারনেটে সমস্যা হতে পারে।";
+
+            box.innerText =
+                "সংযোগ স্থাপন করা যায়নি। ইন্টারনেটে সমস্যা হতে পারে।";
+
             actionBtns.style.display = 'none';
+
         }
+
     }
+
+
+    // ================================
+    // COPY
+    // ================================
 
     function copyAnswer() {
+
         if (!currentAnswerText) return;
-        navigator.clipboard.writeText(currentAnswerText).then(() => {
-            alert('উত্তরটি ক্লিপবোর্ডে কপি করা হয়েছে!');
-        });
+
+
+        navigator.clipboard
+            .writeText(currentAnswerText)
+            .then(() => {
+
+                alert(
+                    'উত্তরটি ক্লিপবোর্ডে কপি করা হয়েছে!'
+                );
+
+            });
+
     }
+
+
+    // ================================
+    // SHARE
+    // ================================
 
     function shareAnswer() {
+
         if (!currentAnswerText) return;
+
+
         if (navigator.share) {
+
             navigator.share({
+
                 title: 'ইসলামিক প্রশ্নোত্তর',
-                text: currentAnswerText,
-            }).catch((error) => console.log('Sharing failed', error));
-        } else {
-            alert('আপনার ডিভাইসটি শেয়ারিং সমর্থন করছে না। দয়া করে কপি করে নিন।');
+
+                text: currentAnswerText
+
+            }).catch((error) =>
+                console.log(
+                    'Sharing failed',
+                    error
+                )
+            );
+
         }
+
+        else {
+
+            alert(
+                'আপনার ডিভাইসটি শেয়ারিং সমর্থন করছে না। দয়া করে কপি করে নিন।'
+            );
+
+        }
+
     }
 
-    function saveToHistory(question, answer) {
-        let history = JSON.parse(localStorage.getItem('islamic_qa_history')) || [];
-        history.unshift({ question, answer });
-        if (history.length > 10) history.pop();
-        localStorage.setItem('islamic_qa_history', JSON.stringify(history));
+
+    // ================================
+    // HISTORY
+    // ================================
+
+    function saveToHistory(
+        question,
+        answer
+    ) {
+
+        let history =
+            JSON.parse(
+                localStorage.getItem(
+                    'islamic_qa_history'
+                )
+            ) || [];
+
+
+        history.unshift({
+
+            question,
+
+            answer
+
+        });
+
+
+        if (history.length > 10) {
+
+            history.pop();
+
+        }
+
+
+        localStorage.setItem(
+
+            'islamic_qa_history',
+
+            JSON.stringify(history)
+
+        );
+
+
         displayHistory();
+
     }
+
 
     function displayHistory() {
-        let history = JSON.parse(localStorage.getItem('islamic_qa_history')) || [];
-        let historyListDiv = document.getElementById('historyList');
+
+        let history =
+            JSON.parse(
+                localStorage.getItem(
+                    'islamic_qa_history'
+                )
+            ) || [];
+
+
+        let historyListDiv =
+            document.getElementById(
+                'historyList'
+            );
+
 
         if (history.length === 0) {
-            historyListDiv.innerHTML = "কোনো হিস্টরি নেই।";
+
+            historyListDiv.innerHTML =
+                "কোনো হিস্টরি নেই।";
+
             return;
+
         }
 
+
         let html = "";
+
+
         history.forEach((item) => {
+
             html += `
+
                 <div class="history-item">
-                    <div class="history-q">প্রশ্ন: ${item.question}</div>
-                    <div style="margin-top: 5px; color: var(--text-color);">${item.answer.substring(0, 80)}...</div>
+
+                    <div class="history-q">
+                        প্রশ্ন: ${item.question}
+                    </div>
+
+                    <div
+                        style="
+                            margin-top: 5px;
+                            color: var(--text-color);
+                        "
+                    >
+                        ${item.answer.substring(0, 80)}...
+                    </div>
+
                 </div>
+
             `;
+
         });
+
+
         historyListDiv.innerHTML = html;
+
     }
 
+
     function clearHistory() {
-        localStorage.removeItem('islamic_qa_history');
+
+        localStorage.removeItem(
+            'islamic_qa_history'
+        );
+
         displayHistory();
+
     }
+
+
+    // ================================
+    // PWA SERVICE WORKER
+    // ================================
+
+    if ('serviceWorker' in navigator) {
+
+        window.addEventListener(
+            'load',
+            function() {
+
+                navigator.serviceWorker
+                    .register('./sw.js')
+
+                    .then(function(registration) {
+
+                        console.log(
+                            'PWA Service Worker registered:',
+                            registration.scope
+                        );
+
+                    })
+
+                    .catch(function(error) {
+
+                        console.error(
+                            'PWA Service Worker registration failed:',
+                            error
+                        );
+
+                    });
+
+            }
+        );
+
+    }
+
 </script>
 
 </body>
