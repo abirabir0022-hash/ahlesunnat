@@ -406,12 +406,105 @@
 
         }
 
+
+        /* ==============================
+           ACCESS REQUEST GATE
+           ============================== */
+        #accessGate {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .access-card {
+            width: 100%;
+            max-width: 430px;
+            background: var(--container-bg);
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 6px 25px rgba(0,0,0,.12);
+            text-align: center;
+        }
+
+        .access-card h2 {
+            margin-bottom: 10px;
+        }
+
+        .access-card p {
+            line-height: 1.6;
+            margin: 8px 0 18px;
+        }
+
+        #accessEmail {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 12px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #accessStatus {
+            margin-top: 14px;
+            line-height: 1.6;
+        }
+
+        .access-logout {
+            margin-top: 12px;
+            background: transparent;
+            color: var(--heading-color);
+            border: 1px solid var(--heading-color);
+            padding: 8px 14px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
     </style>
 
 </head>
 
 
 <body>
+
+
+    <!-- ==============================
+         ACCESS REQUEST GATE
+         ============================== -->
+    <div id="accessGate">
+        <div class="access-card">
+            <h2>🔐 অনুমতি প্রয়োজন</h2>
+            <p id="accessMessage">
+                এই অ্যাপ ব্যবহার করতে আপনার ইমেইল দিন।
+                Continue করার পর আপনার access request পাঠানো হবে।
+            </p>
+
+            <input
+                type="email"
+                id="accessEmail"
+                placeholder="আপনার ইমেইল লিখুন"
+                autocomplete="email"
+            >
+
+            <button
+                class="submit-btn"
+                id="accessContinueBtn"
+                onclick="requestAccess()">
+                Continue
+            </button>
+
+            <div id="accessStatus"></div>
+        </div>
+    </div>
 
 <div class="container">
 
@@ -573,6 +666,12 @@
     "https://www.gstatic.com/firebasejs/12.17.1/firebase-messaging.js";
 
 
+    import {
+        createClient
+    } from
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
 
     /* ==========================================
        FIREBASE CONFIG
@@ -602,6 +701,187 @@
             "G-VYT6MJYZW7"
 
     };
+
+
+    /* ==========================================
+       SUPABASE ACCESS REQUEST SYSTEM
+       ==========================================
+
+       IMPORTANT:
+       এখানে আপনার Supabase Project URL এবং
+       anon/public key বসাতে হবে।
+
+       Supabase Dashboard:
+       Settings → API
+       ========================================== */
+
+    const SUPABASE_URL = "https://ijyzqxshoeradvgmocoa.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_CS_R2CrWB2FFTF5v2cl_zw_TGILEPm2";
+
+    const supabase = createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+    const ACCESS_EMAIL_KEY = "ahlesunnat_access_email";
+    const ACCESS_APPROVED_KEY = "ahlesunnat_access_approved";
+
+    async function checkAccess() {
+        const savedEmail =
+            localStorage.getItem(ACCESS_EMAIL_KEY);
+
+        if (!savedEmail) {
+            showAccessGate();
+            return false;
+        }
+
+        const email = savedEmail.toLowerCase().trim();
+
+        const { data, error } = await supabase
+            .from("approved_users")
+            .select("email")
+            .eq("email", email)
+            .maybeSingle();
+
+        if (error) {
+            console.error("Access check error:", error);
+            showAccessGate(
+                "সার্ভারের সাথে সংযোগ করা যাচ্ছে না। কিছুক্ষণ পরে আবার চেষ্টা করুন।"
+            );
+            return false;
+        }
+
+        if (data) {
+            localStorage.setItem(ACCESS_APPROVED_KEY, "true");
+            hideAccessGate();
+            return true;
+        }
+
+        localStorage.removeItem(ACCESS_APPROVED_KEY);
+        showAccessGate(
+            "আপনার access এখনো অনুমোদিত হয়নি। অনুগ্রহ করে অপেক্ষা করুন।"
+        );
+        return false;
+    }
+
+    window.requestAccess = async function () {
+        const input =
+            document.getElementById("accessEmail");
+
+        const email =
+            input.value.trim().toLowerCase();
+
+        const status =
+            document.getElementById("accessStatus");
+
+        const button =
+            document.getElementById("accessContinueBtn");
+
+        if (!email || !email.includes("@")) {
+            status.innerText =
+                "❌ সঠিক ইমেইল ঠিকানা দিন।";
+            return;
+        }
+
+        button.disabled = true;
+        button.innerText = "Request পাঠানো হচ্ছে...";
+        status.innerText = "";
+
+        try {
+            /* আগে approved কিনা check */
+            const { data: approved, error: approvedError } =
+                await supabase
+                    .from("approved_users")
+                    .select("email")
+                    .eq("email", email)
+                    .maybeSingle();
+
+            if (approvedError) throw approvedError;
+
+            if (approved) {
+                localStorage.setItem(
+                    ACCESS_EMAIL_KEY,
+                    email
+                );
+
+                localStorage.setItem(
+                    ACCESS_APPROVED_KEY,
+                    "true"
+                );
+
+                hideAccessGate();
+                return;
+            }
+
+            /* আগের pending request আছে কিনা */
+            const { data: pending, error: pendingError } =
+                await supabase
+                    .from("access_requests")
+                    .select("id,status")
+                    .eq("email", email)
+                    .eq("status", "pending")
+                    .maybeSingle();
+
+            if (pendingError) throw pendingError;
+
+            if (pending) {
+                status.innerText =
+                    "⏳ আপনার request ইতিমধ্যে পাঠানো হয়েছে। Admin-এর অনুমতির অপেক্ষায় থাকুন।";
+                return;
+            }
+
+            /* নতুন request */
+            const { error: insertError } =
+                await supabase
+                    .from("access_requests")
+                    .insert({
+                        email: email,
+                        status: "pending"
+                    });
+
+            if (insertError) throw insertError;
+
+            localStorage.setItem(
+                ACCESS_EMAIL_KEY,
+                email
+            );
+
+            status.innerText =
+                "✅ আপনার access request পাঠানো হয়েছে। Admin অনুমোদন দিলে আপনি অ্যাপ ব্যবহার করতে পারবেন।";
+
+        } catch (error) {
+            console.error("Access request error:", error);
+            status.innerText =
+                "❌ Request পাঠানো যায়নি। Supabase configuration এবং table permissions পরীক্ষা করুন।";
+        } finally {
+            button.disabled = false;
+            button.innerText = "Continue";
+        }
+    };
+
+    function showAccessGate(message) {
+        const gate =
+            document.getElementById("accessGate");
+
+        const status =
+            document.getElementById("accessStatus");
+
+        gate.style.display = "flex";
+
+        if (message) {
+            status.innerText = message;
+        }
+    }
+
+    function hideAccessGate() {
+        document.getElementById("accessGate")
+            .style.display = "none";
+    }
+
+    /* App load হওয়ার আগে access check */
+    window.addEventListener("load", () => {
+        checkAccess();
+    });
 
 
     /* Firebase চালু */
@@ -894,6 +1174,12 @@
 
     window.loadAnswer =
     async function () {
+
+        const hasAccess = await checkAccess();
+
+        if (!hasAccess) {
+            return;
+        }
 
         const q =
             document
