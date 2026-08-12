@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ahlesunnat Admin Panel</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f5f7fb;color:#172033;margin:0}
+.wrap{max-width:900px;margin:auto;padding:20px}.card{background:white;border:1px solid #e4e7ec;border-radius:16px;padding:20px;margin-bottom:16px}
+input{width:100%;box-sizing:border-box;padding:13px;margin:7px 0 12px;border:1px solid #d0d5dd;border-radius:9px}
+button{border:0;border-radius:9px;padding:11px 16px;font-weight:bold;cursor:pointer}
+.primary{background:#175cd3;color:#fff}.green{background:#087f5b;color:#fff}.red{background:#d92d20;color:#fff}.gray{background:#eef2f6}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.request{border:1px solid #e4e7ec;border-radius:12px;padding:15px;margin:12px 0}.email{font-weight:bold;word-break:break-all}
+.muted{color:#667085;line-height:1.6}.hidden{display:none!important}
+#message{padding:12px;border-radius:9px;margin-bottom:14px}.ok{background:#ecfdf3;color:#067647}.err{background:#fef3f2;color:#b42318}
+</style>
+</head>
+<body><div class="wrap">
+<div id="loginCard" class="card">
+<h1>🔐 Admin Access Panel</h1>
+<p class="muted">শুধু আপনার Admin account দিয়ে login করুন।</p>
+<input id="email" type="email" placeholder="Admin email" autocomplete="email">
+<input id="password" type="password" placeholder="Password" autocomplete="current-password">
+<button class="primary" id="loginBtn" onclick="login()">Login</button>
+<p id="loginStatus" class="muted"></p>
+</div>
+
+<div id="panel" class="hidden">
+<div class="card"><div class="top"><div><h1>🔔 Access Requests</h1><span id="adminLabel" class="muted"></span></div>
+<div class="actions"><button class="gray" onclick="loadRequests()">↻ Refresh</button><button class="red" onclick="logout()">Logout</button></div></div></div>
+<div id="message" class="hidden"></div>
+<div class="card"><div class="top"><h2>Pending Requests</h2><b id="count">0</b></div><div id="requests">Loading...</div></div>
+</div>
+</div>
+
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const SUPABASE_URL="https://ijyzqxshoeradvgmocoa.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_CS_R2CrWB2FFTF5v2cl_zw_TGILEPm2";
+const ADMIN_EMAIL="abirabir0022@gmail.com";
+const supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const $=id=>document.getElementById(id);
+
+window.login=async()=>{
+ const email=$("email").value.trim().toLowerCase(),password=$("password").value;
+ if(email!==ADMIN_EMAIL){$("loginStatus").textContent="❌ এই account Admin নয়।";return}
+ if(!password){$("loginStatus").textContent="Password দিন।";return}
+ $("loginBtn").disabled=true;$("loginStatus").textContent="Login হচ্ছে...";
+ const {data,error}=await supabase.auth.signInWithPassword({email,password});
+ $("loginBtn").disabled=false;
+ if(error){$("loginStatus").textContent="❌ "+error.message;return}
+ showPanel(data.user.email);loadRequests();
+};
+
+window.logout=async()=>{await supabase.auth.signOut();showLogin()};
+function showLogin(msg=""){ $("loginCard").classList.remove("hidden");$("panel").classList.add("hidden");$("loginStatus").textContent=msg}
+function showPanel(email){$("loginCard").classList.add("hidden");$("panel").classList.remove("hidden");$("adminLabel").textContent="Logged in: "+email}
+
+window.loadRequests=async()=>{
+ const box=$("requests");box.textContent="Loading...";
+ const {data,error}=await supabase.from("access_requests").select("id,email,status,created_at").eq("status","pending").order("created_at",{ascending:false});
+ if(error){box.textContent="❌ "+error.message;return}
+ $("count").textContent=data.length;
+ if(!data.length){box.innerHTML='<p class="muted">কোনো pending request নেই।</p>';return}
+ box.innerHTML=data.map(r=>`<div class="request">
+ <div class="email">📧 ${escapeHtml(r.email)}</div>
+ <div class="muted">🕐 ${new Date(r.created_at).toLocaleString()}</div>
+ <div class="actions" style="margin-top:10px">
+ <button class="green" onclick="approve('${r.id}','${encodeURIComponent(r.email)}')">✅ Accept</button>
+ <button class="red" onclick="deny('${r.id}')">❌ Deny</button>
+ </div></div>`).join("");
+};
+
+window.approve=async(id,encodedEmail)=>{
+ const email=decodeURIComponent(encodedEmail).toLowerCase().trim();
+ if(!confirm(email+"\n\nএই user-কে Accept করবেন?"))return;
+ let {error}=await supabase.from("approved_users").upsert({email},{onConflict:"email"});
+ if(error){showMsg("Accept করা যায়নি: "+error.message,true);return}
+ ({error}=await supabase.from("access_requests").update({status:"approved"}).eq("id",id));
+ if(error){showMsg("User approved হয়েছে, কিন্তু request update হয়নি: "+error.message,true);return}
+ showMsg("✅ "+email+" approved হয়েছে।");loadRequests();
+};
+
+window.deny=async(id)=>{
+ if(!confirm("এই access request Deny করবেন?"))return;
+ const {error}=await supabase.from("access_requests").update({status:"denied"}).eq("id",id);
+ if(error){showMsg("Deny করা যায়নি: "+error.message,true);return}
+ showMsg("❌ Request denied হয়েছে।");loadRequests();
+};
+
+function showMsg(t,err=false){const e=$("message");e.textContent=t;e.className=err?"err":"ok";setTimeout(()=>e.classList.add("hidden"),5000)}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+const {data:{session}}=await supabase.auth.getSession();
+if(session&&session.user.email?.toLowerCase()===ADMIN_EMAIL){showPanel(session.user.email);loadRequests()}else{if(session)await supabase.auth.signOut();showLogin()}
+supabase.auth.onAuthStateChange((_event,s)=>{if(!s)showLogin()});
+</script></body></html>
